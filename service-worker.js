@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/Mateify-Frontend/precache-manifest.73d1a8bbb7a6d1514e12f49780333247.js"
+  "/Mateify-Frontend/precache-manifest.549b26dee25aafc3f6b86d14d0d23dca.js"
 );
 
 self.addEventListener('message', (event) => {

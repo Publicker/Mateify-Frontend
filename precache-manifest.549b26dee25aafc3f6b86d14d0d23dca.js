@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "464dc6095e546c809f1665727cd2f9ec",
+    "revision": "f5e95b0e2aaf340662700e916a0ec4f4",
     "url": "/Mateify-Frontend/index.html"
   },
   {
