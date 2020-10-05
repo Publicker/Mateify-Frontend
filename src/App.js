@@ -17,13 +17,13 @@ import {
   Collapse,
   Typography,
 } from "@material-ui/core";
+import Skeleton from "@material-ui/lab/Skeleton";
 import {
   ExpandLess,
   ExpandMore,
-  StarBorder,
   AccountCircle as AccountCircleIcon,
+  MusicNote,
 } from "@material-ui/icons";
-
 import "./App.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -43,15 +43,15 @@ const App = () => {
   });
 
   const classes = useStyles();
+  const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
 
   const getUsers = async () => {
     const response = await fetch("https://mateify-api.herokuapp.com/users");
     const responseUsers = await response.json();
 
-    console.log(responseUsers);
-
     setUsers(responseUsers);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -87,50 +87,80 @@ const App = () => {
             }
             className={classes.root}
           >
-            {users.map((user, index) => {
-              return (
-                <div key={`user-${index}`}>
-                  <ListItem button onClick={() => handleClick(index)}>
-                    <ListItemIcon>
-                      <AccountCircleIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={`${user.name} ${user.surname}`}
-                      secondary={`${
-                        !user.favoriteSongs.length
-                          ? ""
-                          : `${user.favoriteSongs.length} song${
-                              user.favoriteSongs.length > 1 ? "s" : ""
-                            }`
-                      }`}
-                    />
-                    {user.favoriteSongs.length ? (
-                      user.songsOpened ? (
-                        <ExpandLess />
-                      ) : (
-                        <ExpandMore />
-                      )
-                    ) : null}
-                  </ListItem>
-                  {user.favoriteSongs.length ? (
-                    <Collapse
-                      in={user.songsOpened}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <List component="div" disablePadding>
-                        <ListItem button className={classes.nested}>
-                          <ListItemIcon>
-                            <StarBorder />
-                          </ListItemIcon>
-                          <ListItemText primary="Starred" />
-                        </ListItem>
-                      </List>
-                    </Collapse>
-                  ) : null}
-                </div>
-              );
-            })}
+            {isLoading
+              ? [0, 1, 2, 3].map((item, index) => {
+                  return (
+                    <ListItem key={`skeleton-${index}`}>
+                      <ListItemIcon>
+                        <Skeleton
+                          animation="wave"
+                          variant="circle"
+                          width={25}
+                          height={25}
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={<Skeleton animation="wave" width="80%" />}
+                        secondary={<Skeleton animation="wave" width="20%" />}
+                      />
+                    </ListItem>
+                  );
+                })
+              : users.map((user, index) => {
+                  return (
+                    <div key={`user-${index}`}>
+                      <ListItem button onClick={() => handleClick(index)}>
+                        <ListItemIcon>
+                          <AccountCircleIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={`${user.name} ${user.surname}`}
+                          secondary={`${
+                            !user.favoriteSongs.length
+                              ? ""
+                              : `${user.favoriteSongs.length} song${
+                                  user.favoriteSongs.length > 1 ? "s" : ""
+                                }`
+                          }`}
+                        />
+                        {user.favoriteSongs.length ? (
+                          user.songsOpened ? (
+                            <ExpandLess />
+                          ) : (
+                            <ExpandMore />
+                          )
+                        ) : null}
+                      </ListItem>
+                      {user.favoriteSongs.length ? (
+                        <Collapse
+                          in={user.songsOpened}
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <List component="div" disablePadding>
+                            {user.favoriteSongs.map((favoriteSong, index) => {
+                              return (
+                                <ListItem
+                                  key={`user${user.index}-song-${favoriteSong._id}`}
+                                  button
+                                  className={classes.nested}
+                                >
+                                  <ListItemIcon>
+                                    <MusicNote />
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    primary={favoriteSong.name}
+                                    secondary={favoriteSong.artist}
+                                  />
+                                </ListItem>
+                              );
+                            })}
+                          </List>
+                        </Collapse>
+                      ) : null}
+                    </div>
+                  );
+                })}
           </List>
         </Container>
       </main>
